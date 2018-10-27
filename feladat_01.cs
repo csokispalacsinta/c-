@@ -4,19 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace nagyzhminta
 {
     class Program
     {
         static string[,] HarcterGeneralas()
-        {
-            string[,] harcter = new string[10, 20];
+        {			
+			// Nem muszály tipusadás a C# ban a változó neve elött, elég a 'var' kulcsszó,
+			// var esetében a gép az '=' operátor jobb oldalából kitalálja a tipust.
+			var harcter = new string[10, 20];  // Ami ebben az esetben elég egyértelmű szemmel is
+			
+			/* 
+				A változó nevek egyértelműek kellenek hogy legyenek (CleanCode - Robert C. Martin),
+				kivéve a ciklus indexeket meg itt a Random classt hiszen ezek a hosszabb változónév nélkül
+				is egyértelműek.
+			*/
             Random r = new Random();
+			
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 20; j++)
                 {
-                    if (r.Next(101)<30)
+                    if (r.Next(101) < 30)
                     {
                         harcter[i, j] = "s";
                     }
@@ -24,23 +34,20 @@ namespace nagyzhminta
                     {
                         harcter[i, j] = "s";
                     }
-                    else
-                        if (i<2)
-                        harcter[i, j] = "p";
-                    if (i>1)
+                    else {
+						if (i < 2) harcter[i, j] = "p";
+					}
+					
+                    if (i > 1)
                     {
-                        if (r.Next(101)<50)
+                        if (r.Next(101) < 50)
                         {
                             harcter[i, j] = "p";
                         }
                         else
                         {
-                            if (r.Next(101) < 50)
-                            {
-                                harcter[i, j] = "i";
-                            }
-                            else
-                                harcter[i, j] = "e";
+                            if (r.Next(101) < 50) harcter[i, j] = "i";
+                            else harcter[i, j] = "e";
                         }
                     }
                 }
@@ -101,7 +108,8 @@ namespace nagyzhminta
         static double[] Pormegoszlas(string[,] forras)
         {
             int összespor = Pormennyiseg(forras); 
-            double[] megoszlas = new double[10];
+            var megoszlas = new double[10];
+			
             for (int i = 0; i < forras.GetLength(0); i++)
             {
                 int x = 0;
@@ -146,7 +154,7 @@ namespace nagyzhminta
             }
         }
 
-        static void Csere(ref double a,ref double b)
+        static void Csere(ref double a, ref double b)
         {
             double seged = a;
             a = b;
@@ -160,22 +168,34 @@ namespace nagyzhminta
             Console.WriteLine("i = idegen");
             Console.WriteLine("e = ember");
             Console.WriteLine();
-            string[,] harcter = HarcterGeneralas();
+            
+			var harcter = HarcterGeneralas();
             AdatokMegjelenites(harcter);
-            int db = Pormennyiseg(harcter);
-            Console.WriteLine(db+" db por található");
-            for (int i = 0; i < Pormegoszlas(harcter).Length; i++)
+            
+			int db = Pormennyiseg(harcter);
+            Console.WriteLine(db + " db por található");
+            
+			// Teljesítménybeli gondot okozhat ha 
+			// cikluson belül hívsz meg egy metódust.
+			// Ilyenkor érdemes egy változóba helyezni a metódus értékét
+			// legalább a ciklus idejére.
+			var por = Pormegoszlas(harcter);
+			for (int i = 0; i < por.Length; i++)
             {
-                Console.WriteLine(Pormegoszlas(harcter)[i]);
+                Console.WriteLine(por[i]);
             }
             Console.WriteLine();
-            int min = LegkevesebbPor(Pormegoszlas(harcter));
-            Console.WriteLine(min);
-            CsokkenobeRendez(Pormegoszlas(harcter));
-            foreach (var item in Pormegoszlas(harcter))
+            
+			// Vagy az ellenkezője, ha csak egy szer használom egy metódus
+			// kimenetelét akkor minek mentsem el?
+            Console.WriteLine(LegkevesebbPor(por));
+            CsokkenobeRendez(por);
+			
+            foreach (var item in por)
             {
-                Console.Write(item+" ");
-            }
+                Console.Write(item + " ");
+            
+			}
             Console.WriteLine();
             MezotModosit(harcter);
             AdatokMegjelenites(harcter);
