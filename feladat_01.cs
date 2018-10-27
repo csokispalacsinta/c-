@@ -13,7 +13,8 @@ namespace nagyzhminta
         {
             // Nem muszály tipusadás a C# ban a változó neve elött, elég a 'var' kulcsszó,
             // var esetében a gép az '=' operátor jobb oldalából kitalálja a tipust.
-            var harcter = new string[10, 20];  // Ami ebben az esetben elég egyértelmű szemmel is
+            // (erröl lehet hogy valakit meg kell kérdezned hátha nem fogadják el.)
+            var harcter = new string[10, 20]; 
 
             /* 
 				A változó nevek egyértelműek kellenek hogy legyenek (CleanCode - Robert C. Martin),
@@ -26,22 +27,22 @@ namespace nagyzhminta
             {
                 for (int j = 0; j < 20; j++)
                 {
-                    if (r.Next(101) < 30)
+                    if (r.NextDouble() < .3)
                         harcter[i, j] = "s";
-                    else if (i < 2 && r.Next(101) < 50)
+                    else if (i < 2 && r.NextDouble() < .5)
                         harcter[i, j] = "s";
                     else if(i < 2)
                         harcter[i, j] = "p";
 
                     if (i > 1)
                     {
-                        if (r.Next(101) < 50)
+                        if (r.NextDouble() < .5)
                         {
                             harcter[i, j] = "p";
                         }
                         else
                         {
-                            if (r.Next(101) < 50)
+                            if (r.NextDouble() < .5)
                                 harcter[i, j] = "i";
                             else
                                 harcter[i, j] = "e";
@@ -54,40 +55,18 @@ namespace nagyzhminta
 
         static string AdatokMegjelenites(string[,] forras)
         {
-            /*
-             * Ez lehet kicsit túl lett bonyolítva.
-         
             string s = "";
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 20; j++)
                 {
                     s += forras[i, j];
-                }
-            }
-            for (int i = 0; i < s.Length; i++)
-            {
-                if (i % 20 == 19)
-                {
-                    Console.Write(s[i] + "\r\n");
-                }
-                else
-                    Console.Write(s[i] + " ");
-            }
-            return s;
-            */
-
-            // Mivel a forras paramter magában egy string mátrix ezért nincs semmi értelme 
-            // stringbe ömleszeni. Én ezt az algoritmust szoktam használni mátrix adatok kiírására:
-            for (int i = 0; i < 10; i++)
-            {
-                for (int j = 0; j < 20; j++)
                     Console.Write(forras[i, j] + " ");
+                }
                 Console.WriteLine();
             }
-            // És ömlesztésére:
-            return string.Join("\r\n", string.Join("  ", forras));  // Stringé alakítja a mátrixot (egy sorban!)
-
+            // Lázadó verzió: return string.Join("\r\n", string.Join("  ", forras));
+            return s;
             // Tipp: Ha megtetszik egy beépített metódus mint a string.Join akkor ezeket ne magold be, hanem
             // tarts magadnál egy 'mindenes' VS projektet és minnél hamarabb ültesd a gyakorlatba.
         }
@@ -117,23 +96,27 @@ namespace nagyzhminta
 
         static double[] Pormegoszlas(string[,] forras)
         {
-            int összespor = Pormennyiseg(forras);
+            double osszespor = Pormennyiseg(forras);  // int volt double lett 
             var megoszlas = new double[10];
+
+            // Console.WriteLine("Forras: " + forras.GetLength(0));
 
             for (int i = 0; i < forras.GetLength(0); i++)
             {
-                int x = 0;
                 int db = 0;
                 for (int j = 0; j < 20; j++)
                 {
-                    if (forras[i, j] == "p")
+                    if (forras[i, j] is "p")
                     {
                         db++;
                     }
                 }
-                megoszlas[x] = (db / összespor) * 100;
-                x++;
+                megoszlas[i] = (db / osszespor) * 100;
+                // Console.WriteLine("Db: " + (db / osszespor) + " Iter: " + i);
             }
+
+            // Console.WriteLine("Megoszlas0: " + megoszlas[0]);
+
             return megoszlas;
         }
 
@@ -166,9 +149,7 @@ namespace nagyzhminta
 
         static void Csere(ref double a, ref double b)
         {
-            // var kulcsszó, segít a vizsgán hogy gyorsan beírd a tipusnevet.
-            // (erröl lehet hogy valakit meg kell kérdezned hátha nem fogadják el.)
-            var seged = a;
+            double seged = a;
             a = b;
             b = seged;
         }
